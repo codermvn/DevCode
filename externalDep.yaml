@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: latestgreeting 
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      bb: web
+  template:
+    metadata:
+      labels:
+        bb: web
+    spec:
+        volumes:
+          - name: application-config
+            configMap:
+             name: application-file   
+          
+        containers:
+          - name: latestgreeting
+            image: dvarshney86/practise:4.0
+            volumeMounts:
+              - name: application-config
+                mountPath: /test/ 
+ 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: greeting-entrypoint
+  namespace: default
+spec:
+  type: NodePort
+  selector:
+    bb: web
+  ports:
+  - port: 8080
+    targetPort: 8080
+    nodePort: 30002
